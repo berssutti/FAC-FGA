@@ -1,0 +1,20 @@
+.data
+msg: .asciiz  "\n"
+.text
+
+
+main:
+	li $v0, 5 # servipo 5, de ler um interger
+	syscall # chamada do sistema
+	move $t1, $v0 # Armazenar $v0 em $t1
+	li $v0, 5 # serviço 5, de ler um integer
+	syscall # chamada de sistema para o serviço $v0, 5
+	move $t2, $v0 # Armazena $v0 em $t2
+	add $a0, $t1, $t2 # soma $t1 e $t2 e armazena o resultado em $a0
+	li $v0, 1 # serviço de printar
+	syscall # chamada de sistema para o serviço $v0, 1
+	la   $a0, msg # carrega o endereço da msg
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	li $v0, 10	
+	syscall

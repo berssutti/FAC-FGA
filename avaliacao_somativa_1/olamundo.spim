@@ -1,0 +1,8 @@
+.data
+msg: .asciiz  "Ola Mundo\n"
+.text
+
+main:
+	la $a0, msg # carrega endereço da msg para o $a0
+	li $v0, 4 # serviço para printar string
+	syscall
