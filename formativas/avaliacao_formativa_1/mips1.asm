@@ -1,0 +1,6 @@
+.data
+
+.text
+ 
+ main:
+ 	
