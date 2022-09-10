@@ -1,2 +1,2 @@
 # FAC
-Repositório das avaliações somativas e formativas de Fundamentos de Arquitetura de Computadores
+Repositório das avaliações somativas de Fundamentos de Arquitetura de Computadores
