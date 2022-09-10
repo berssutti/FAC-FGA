@@ -1,0 +1,254 @@
+.data
+
+frase1: .asciiz "A exponencial modular "
+frase2: .asciiz " elevado a "
+frase3: .asciiz " (mod "
+frase4: .asciiz ") eh "
+ponto: .asciiz ".\n"
+invalida: .asciiz "Entradas invalidas.\n"
+naoprimof: .asciiz "O modulo nao eh primo.\n"
+.text
+
+# $s0: base
+# $s1: expoente
+# $s2: mod $s2
+# $t0: result
+# $t1: salva a base
+# $t2: mascara
+# $t3: copia do expoente
+# $t4: salva o expoente
+# $t5: resultado da verificacao
+# $t6: resultado da multiplicacao
+
+main:
+	li $v0, 5
+	syscall
+	move $s0,$v0 
+	
+	li $v0, 5
+	syscall
+	move $s1, $v0
+
+	
+	li $v0, 5
+	syscall
+	move $s2, $v0
+	
+
+
+validEntrada:
+	
+	blez $s0, entradaInvalida
+	blez $s1, entradaInvalida
+	blez $s2, entradaInvalida
+	
+	bgt $s0, 65534, entradaInvalida
+	bgt $s1, 65534, entradaInvalida
+	bgt $s2, 65534, entradaInvalida
+
+### Verificar se o $s2 e primo
+verifPrimo:
+	#li $t6, 9
+	#li $t7, 8
+	li $s4, 7
+	li $s5, 6
+	
+	li $t2, 5
+	li $t3, 4
+	li $t4, 2
+	li $t5, 1
+	
+	
+	beq $s2, 1, naoprimo # se a entrada for 1 chama funcao printNao
+	
+	
+	slti $t0, $s2, 16384
+	beq $t0, 0, verif16384
+	
+	slti $t0, $s2, 4096
+	beq $t0, 0, verif4096
+	
+	slti $t0, $s2, 1024
+	beq $t0, 0, verif1024
+	
+	slti $t0, $s2, 256
+	beq $t0, 0, verif256
+	
+	slti $t0, $s2, 16
+	beq $t0, 0, verif16
+	
+	slti $t0, $s2, 4
+	beq $t0, 0, verif4
+	beq $t0, 1, variaveis
+
+verif16384:
+	srlv $s3, $s2, $s4
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s3, $s3, 1
+	j loopPrimo
+
+verif4096:
+	srlv $s3, $s2, $s5
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s3, $s3, 1
+	j loopPrimo
+
+verif1024:
+	srlv $s3, $s2, $t2
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s3, $s3, 1
+	j loopPrimo
+verif256:
+	srlv $s3, $s2, $t3
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s3, $s3, 1
+	j loopPrimo
+verif16:
+	srlv $s3, $s2, $t4
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s3, $s3, 1
+	j loopPrimo
+verif4:
+	srlv $s3, $s2, $t5
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s3, $s3, 1
+	j loopPrimo
+loopPrimo:
+	beq $t2, $s3, exitPrimo
+	divu $s2, $t2
+	mfhi $t3
+	beq $t3, $zero, maisDivisor
+	addi $t2, $t2,1
+	j loopPrimo
+
+maisDivisor:
+	addi $t1, $t1, 1
+	addi $t2, $t2,1
+	
+	j loopPrimo
+
+exitPrimo: 
+	beq $t1, $zero, variaveis
+	
+	j naoprimo
+### Codigo de modulo exponencial ###
+variaveis:
+	move $t1, $s0
+	move $t4, $s1
+	move $t3, $s1 # copia do expoente para fazer a mascara
+	li $t0 , 1
+mascara:
+	and $t2, $t3, 1 # faz mascara
+	# para fazer a mascara dos digitos mais a esquerda basta: sll 1 no $t1(iterador da mascara) e srl 1 no $t2 (mascara)
+loop:	
+	ble $t3, $zero, exitLoop
+	#beqz $s1, exitLoop
+	
+	beq $t2, 1, atualizaResult
+	
+	### Atualiza a base ###
+	multu $s0, $s0
+	mflo $t6
+	divu $t6, $s2
+	mfhi $s0 # atualiza a base
+	### Atualiza a mascara ###
+	srl $t3, $t3, 1
+	### Atualiza o expoente ###
+	addiu $s1, $s1, -1
+	
+	j mascara
+	
+atualizaResult:
+	multu $t0, $s0
+	mflo $t6
+	divu $t6, $s2
+	mfhi $t0 # atualiza o result
+
+	### Atualiza a base ###
+	multu $s0, $s0
+	mflo $t6
+	divu $t6, $s2
+	mfhi $s0 # atualiza a base
+	### Atualiza a mascara ###
+	srl $t3, $t3, 1
+	### Atualiza o expoente ###
+	addiu $s1, $s1, -1
+	
+	j mascara
+
+exitLoop:
+	
+	la $a0, frase1 # carrega o endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+      	
+      	move $a0, $t1 
+	li $v0, 1 
+	syscall
+      	
+      	la $a0, frase2 # carrega o endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+      	
+      	move $a0, $t4 
+	li $v0, 1 
+	syscall
+	
+	la $a0, frase3 # carrega o endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+      	
+      	move $a0, $s2 
+	li $v0, 1 
+	syscall
+	
+	la $a0, frase4 # carrega o endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+      	
+	move $a0, $t0 # mover o valor de $t3(result) para $a0
+	li $v0, 1 # serviço para printar inteiro
+	syscall
+	
+	la $a0, ponto # carrega o endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	
+	li $v0, 10
+	syscall
+	
+entradaInvalida:
+	la $a0, invalida # carrega o endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+      	
+      	li $v0, 10
+	syscall
+
+naoprimo:
+	la $a0, naoprimof # carrega o endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+      	
+      	li $v0, 10
+	syscall
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

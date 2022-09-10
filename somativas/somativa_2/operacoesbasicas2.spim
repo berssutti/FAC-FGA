@@ -1,0 +1,130 @@
+.data
+
+enter: .asciiz "\n"
+adicao: .asciiz  "ADD: "
+subtracao: .asciiz "SUB: "
+opLogicaAnd: .asciiz "AND: "
+opLogicaOr: .asciiz "OR: "
+opLogicaXor: .asciiz "XOR: "
+opLogicaMask: .asciiz "MASK: "
+Sll: .asciiz "SLL("
+Srl: .asciiz "SRL("
+par: .asciiz "): "
+
+.text
+
+main:
+	# ler entradas
+	li $v0, 5 # ler inteiro
+	syscall
+	move $t0, $v0 # mover o conteudo de $v0 para $t0
+	li $v0, 5 # ler inteiro
+	syscall
+	move $t1, $v0 # mover o conteudo de $v0 para $t1
+	li $v0, 5 # ler inteiro
+	syscall
+	move $t2, $v0 # mover o conteudo de $v0 para $t2
+	
+	# Parte 1
+	# adicao
+	la   $a0, adicao # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	add $a0, $t0,$t1 # soma $t0 e $t1 e armazena o resultado em $a0
+	li $v0, 1 # serviço de printar
+	syscall
+	la   $a0, enter # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	# subtracao
+	la   $a0, subtracao # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	sub $a0, $t0,$t1 # subtrai $t0 e $12 e armazena o resultado em $a0
+	li $v0, 1
+	syscall
+	la   $a0, enter # carrega o endereç
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	
+	# Parte 2
+	# and
+	la   $a0, opLogicaAnd # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	and $a0, $t0, $t1 # efetua operacao logica de and entre $t0 e $t1
+	li $v0, 1
+	syscall 
+	la   $a0, enter # carrega o endereç
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	# or
+	la   $a0, opLogicaOr # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	or $a0, $t0, $t1 # efetua operacao logica de and entre $t0 e $t1
+	li $v0, 1
+	syscall 
+	la   $a0, enter # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	# xor
+	la   $a0, opLogicaXor # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	xor $a0, $t0, $t1 # efetua operacao logica de and entre $t0 e $t1
+	li $v0, 1
+	syscall 
+	la   $a0, enter # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	
+	# Parte 3
+	la   $a0, opLogicaMask # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	andi $t3, $t2, 31 # efetua operacao logica de and entre $t2 e 31 e armazena em $t3
+	move $a0, $t3 # mover o valor de $t3 para $a3
+	li $v0, 1 # serviço para printar inteiro
+	syscall
+	la   $a0, enter # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	
+	# Parte 4
+	# sll
+	la   $a0, Sll # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+      	move $a0, $t3
+      	li $v0, 1
+      	syscall
+      	la $a0, par #carrega endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o seviço $v0, 4
+	sllv $a0, $t0, $t3 # mover $t3 vezes para a esquerda
+	li $v0, 1 # serviço para printar inteiro
+	syscall
+	la   $a0, enter # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	# srl
+	la   $a0, Srl # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	move $a0, $t3
+      	li $v0, 1
+      	syscall
+      	la $a0, par #carrega endereço
+      	li $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o seviço $v0, 4
+	srlv $a0, $t1, $t3 # mover $t3 vezes para a esquerda
+	li $v0, 1 # serviço para printar inteiro
+	syscall
+	la   $a0, enter # carrega o endereço
+      	li   $v0, 4 # serviço para printar string
+      	syscall # chamada de sistema para o serviço $v0, 4
+	
+	li $v0, 10	
+	syscall
+	

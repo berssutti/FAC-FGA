@@ -1,0 +1,56 @@
+.data
+
+palavraPar: .asciiz "THUMS THUMS THUMS THUMS THUMS THUMS\n"
+palavraImpar: .asciiz "THUMS THUMS THUMS\n"
+quebra: .asciiz "\n"
+
+.text
+
+main:
+	li $v0, 5
+	syscall # lê inteiro
+	move $s0, $v0 # atribui o valor de entrada a $s0 (qtd de linhas que tem que printar)
+	li $s1, 0 # atribui o valor de 0 a $s1
+	jal loop # chama a função loop
+	
+	# finaliza programa
+	li $v0, 10
+	syscall
+loop:
+
+	addi $s1, $s1, 1 # soma 1 ao valor de iteração
+	#beq $s0, $s1, exit # condição para o loop
+	 
+	addi $s0,$s0,1 # soma 1 ao valor de entrada
+	slt $t4, $s1, $s0 
+	beq $t4, $zero, exit # condição de saida so loop (se $s1 for NÃO for menor que $s0)
+	addi $s0, $s0, -1 # subtrai 1 ao valor de entrada
+	
+	li $t2, 2
+	div $s1, $t2 # divide o $s1 (iteração) por 2
+	mfhi $t3
+	
+	bne $t3, 0, impar # se o resto da divisão por 2 for diferente de 0 chama a função impar
+	beq $t3, 0, par # se o resto da divisão por 2 for igual a 0 chama a função par
+
+par:
+	li $v0, 4
+	la $a0, palavraPar
+	syscall # printa palavra par
+	
+	j loop # chama a função loop
+impar:
+	li $v0, 4
+	la $a0, palavraImpar
+	syscall # printa palavra impar
+	
+	j loop # chama a função loop
+	
+exit:
+	jr $ra
+	
+	
+	
+	
+	
+	

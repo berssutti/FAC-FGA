@@ -1,0 +1,90 @@
+# Não Funciona (da TLE)
+
+.data 
+
+sim: .asciiz "sim"
+nao: .asciiz "nao"
+invalido: .asciiz "Entrada invalida."
+
+.text
+
+main:
+	li $v0, 5 # ler numero integer
+	syscall
+
+	move $s0, $v0 # move valor de $v0 para $s0
+	move $s1, $s0
+	
+	addi $t0, $zero, 1
+	slti $t1, $s0, 1 # verifica se a entrada e menor que 1
+	beq $t1, $t0, printInvalido # se a entrada for menor que 1 chama funcao printInvalido
+	beq $s0, $t0, printNao # se a entrada for 1 chama funcao printNao
+	
+	srl $t2, $s0, 1
+	li $t1, 0 # contador de divisores
+	
+	jal raizQuadrada
+	
+	li $t4, 1
+	li $t0, 1 # divisor
+	li $t1, 0 # contador de divisores
+	
+	j loop
+# calcula raiz quadrada
+raizQuadrada:
+
+	div $t3, $s0, $s1
+	add $t4, $t3, $s1
+	srl $s1, $t4, 1
+	
+	addi $t1,$t1, 1
+	bne $t2, $t1, raizQuadrada
+	jr $ra
+
+# conta o divisores do numero
+loop:
+	div  $s0,$t0
+	mfhi $t6
+	
+	beqz $t6, somaDivisor
+	beq $s1, $t0, primonaoprimo # se o divisor for igual a raiz da entrada chama a funcao primonaoprimo
+	addi $t0,$t0, 1 #aumenta o divisor
+	
+	j loop
+
+somaDivisor:
+	addi $t1,$t1, 1 # aumenta o numero de divisores
+	beq $s1, $t0, primonaoprimo # se o divisor for igual a raiz da entrada chama a funcao primonaoprimo
+	addi $t0,$t0, 1 #aumenta o divisor
+	j loop
+	
+primonaoprimo:
+	slti $t5,$t1, 2 # se $t1 < 2 => $t4 = 1 (Primo). Se $t1 não for < 2 => $t4 = 0(composto)
+	beq  $t4, $t5, printSim
+	j printNao
+
+printSim:
+	li $v0, 4
+	la $a0, sim
+	syscall # printa palavra primo
+	
+	j finalizaExec
+printNao:
+	li $v0, 4
+	la $a0, nao
+	syscall # printa palavra composto
+	
+	j finalizaExec
+
+printInvalido:
+	li $v0, 4
+	la $a0, invalido
+	syscall # printa palavra invalido
+
+	j finalizaExec
+
+finalizaExec:
+	li $v0, 10
+	syscall
+	
+	

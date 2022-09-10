@@ -1,0 +1,99 @@
+.data
+buffer: .space 20
+
+.text
+
+main: 
+	li $v0, 8
+	li $a1, 15
+	la $a0, buffer
+	syscall
+	
+	move $t0, $a0 # coloca a string na $t0
+	jal getchar
+	
+ 	li $v0, 10
+ 	syscall
+ 
+ getchar:
+ 	lb $a0, ($t0) # carrega o byte
+	move $s0, $a0
+	beqz $s0, exit # verifica se o char e zero
+
+	beq $s0,'A', print2
+	beq $s0,'B', print2
+	beq $s0,'C', print2
+	
+	beq $s0,'D', print3
+	beq $s0,'E', print3
+	beq $s0,'F', print3
+	
+	beq $s0,'G', print4
+	beq $s0,'H', print4
+	beq $s0,'I', print4
+	
+	beq $s0,'J', print5
+	beq $s0,'K', print5
+	beq $s0,'L', print5
+	
+	beq $s0,'M', print6
+	beq $s0,'N', print6
+	beq $s0,'O', print6
+	
+	beq $s0,'P', print7
+	beq $s0,'Q', print7
+	beq $s0,'R', print7
+	beq $s0,'S', print7
+	
+	beq $s0,'T', print8
+	beq $s0,'U', print8
+	beq $s0,'V', print8
+	
+	beq $s0,'W', print9
+	beq $s0,'X', print9
+	beq $s0,'Y', print9
+	beq $s0,'Z', print9
+ 	move $a0, $s0
+	li $v0, 11 # printa o byte(caractere)
+	syscall
+	addi $t3, $t3, 1 # incrementa 1 no contador
+	addi $t0 , $t0, 1 # adiciona 1 ao $t0 (pega proximo char)
+
+	j getchar
+exit:
+ 	jr $ra
+ 
+print2:
+	li $s0, '2'
+	j printchar
+print3:
+	li $s0, '3'
+	j printchar
+print4:
+	li $s0, '4'
+	j printchar
+print5:
+	li $s0, '5'
+	j printchar
+print6:
+	li $s0, '6'
+	j printchar
+print7:
+	li $s0, '7'
+	j printchar
+print8:
+	li $s0, '8'
+	j printchar
+print9:
+	li $s0, '9'
+	j printchar
+	
+printchar:
+	move $a0, $s0
+	li $v0, 11 # printa o byte(caractere)
+	syscall
+	addi $t3, $t3, 1 # incrementa 1 no contador
+	addi $t0 , $t0, 1 # adiciona 1 ao $t0 (pega proximo char)
+	
+	beq $t3, $t1, exit # se o contador $t3 for igual a qtd de char da string sai do loop
+	j getchar

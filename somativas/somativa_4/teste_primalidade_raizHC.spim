@@ -1,0 +1,103 @@
+# Funciona
+
+.data
+
+sim: .asciiz "sim\n"
+nao: .asciiz "nao\n"
+invalido: .asciiz "Entrada invalida.\n"
+
+
+.text
+
+main:
+	li $v0, 5 # ler numero integer
+	syscall
+
+	move $s0, $v0 # move valor de $v0 para $s0
+	
+	li $t2, 5
+	li $t3, 4
+	li $t4, 2
+	li $t5, 1
+	
+	addi $t0, $zero, 1
+	slti $t1, $s0, 1 # verifica se a entrada e menor que 1
+	beq $t1, $t0, printInvalido # se a entrada for menor que 1 chama funcao printInvalido
+	beq $s0, $t0, composto # se a entrada for 1 chama funcao printNao
+	
+	slti $t0, $s0, 1024
+	beq $t0, 0, verif1024
+	slti $t0, $s0, 256
+	beq $t0, 0, verif256
+	slti $t0, $s0, 16
+	beq $t0, 0, verif16
+	slti $t0, $s0, 4
+	beq $t0, 0, verif4
+	beq $t0, 1, primo
+	
+verif1024:
+	srlv $s1, $s0, $t2
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s1, $s1, 1
+	j loop
+verif256:
+	srlv $s1, $s0, $t3
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s1, $s1, 1
+	j loop
+verif16:
+	srlv $s1, $s0, $t4
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s1, $s1, 1
+	j loop
+verif4:
+	srlv $s1, $s0, $t5
+	addi $t1, $zero, 0 # contador de divisores
+	addi $t2, $zero, 2 # divisor
+	addi $s1, $s1, 1
+	j loop
+loop:
+	beq $t2, $s1, exit
+	div $s0, $t2
+	mfhi $t3
+	beq $t3, $zero, maisDivisor
+	addi $t2, $t2,1
+	j loop
+
+maisDivisor:
+	addi $t1, $t1, 1
+	addi $t2, $t2,1
+	
+	j loop
+
+exit: 
+	beq $t1, $zero, primo
+	j composto 
+
+primo:
+	li $v0, 4
+	la $a0, sim
+	syscall # printa palavra primo
+	
+	j finalizaExec
+
+composto:
+	li $v0, 4
+	la $a0, nao
+	syscall # printa palavra composto
+	
+	j finalizaExec
+	
+printInvalido:
+	li $v0, 4
+	la $a0, invalido
+	syscall # printa palavra invalido
+
+	j finalizaExec
+
+finalizaExec:
+	li $v0, 10
+	syscall
