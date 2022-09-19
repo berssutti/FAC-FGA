@@ -1,0 +1,133 @@
+.data
+
+enter: .asciz "\n"
+adicao: .asciz  "ADD: "
+subtracao: .asciz "SUB: "
+opLogicaAnd: .asciz "AND: "
+opLogicaOr: .asciz "OR: "
+opLogicaXor: .asciz "XOR: "
+opLogicaMask: .asciz "MASK: "
+Sll: .asciz "SLL("
+Srl: .asciz "SRL("
+par: .asciz "): "
+
+.text
+
+main:
+	# ler entradas
+	li a7, 5 # ler inteiro
+	ecall
+	mv s0, a0 # mover o conteudo de a7 para t0
+	
+	li a7, 5 # ler inteiro
+	ecall
+	mv s1, a0
+	
+	li a7, 5 # ler inteiro
+	ecall
+	mv s2, a0
+
+	
+	# Parte 1
+	# adicao
+	la a0, adicao # carrega o endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema
+	add a0,s0,s1 # soma $t0 e $t1 e armazena o resultado em $a0
+	li a7, 1 # serviço de printar
+	ecall
+	la a0, enter # carrega o endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	# subtracao
+	la a0, subtracao # carrega o endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	sub a0, s0, s1 # subtrai 
+	li a7, 1
+	ecall
+	la a0, enter # carrega o endereç
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	
+	# Parte 2
+	# and
+	la a0, opLogicaAnd # carrega o endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	and a0, s0, s1 # efetua operacao logica de and entre $t0 e $t1
+	li a7, 1
+	ecall 
+	la a0, enter # carrega o endereç
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	# or
+	la a0, opLogicaOr # carrega o endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	or a0, s0, s1 # efetua operacao logica de and entre $t0 e $t1
+	li a7, 1
+	ecall 
+	la   a0, enter # carrega o endereço
+      	li   a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	# xor
+	la a0, opLogicaXor # carrega o endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	xor a0, s0, s1 # efetua operacao logica de and entre $t0 e $t1
+	li a7, 1
+	ecall 
+	la a0, enter # carrega o endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	
+	# Parte 3
+	la   a0, opLogicaMask # carrega o endereço
+      	li   a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	andi s3, s2, 31 # efetua operacao logica de and entre $t2 e 31 e armazena em $t3
+	mv a0, s3 # mover o valor de $t3 para $a0
+	li a7, 1 # serviço para printar inteiro
+	ecall
+	la   a0, enter # carrega o endereço
+      	li   a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	
+	# Parte 4
+	# sll
+	la   a0, Sll # carrega o endereço
+      	li   a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+      	mv a0, s3
+      	li a7, 1
+      	ecall
+      	la a0, par #carrega endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o seviço $v0, 4
+	sll a0, s0, s3 # mover $t3 vezes para a esquerda
+	li a7, 1 # serviço para printar inteiro
+	ecall
+	la  a0, enter # carrega o endereço
+      	li  a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	# srl
+	la   a0, Srl # carrega o endereço
+      	li   a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	mv a0, s3
+      	li a7, 1
+      	ecall
+      	la a0, par #carrega endereço
+      	li a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o seviço $v0, 4
+	srl a0, s1, s3 # mover $t3 vezes para a esquerda
+	li a7, 1 # serviço para printar inteiro
+	ecall
+	la   a0, enter # carrega o endereço
+      	li   a7, 4 # serviço para printar string
+      	ecall # chamada de sistema para o serviço $v0, 4
+	
+	li a7, 10	
+	ecall
+	
